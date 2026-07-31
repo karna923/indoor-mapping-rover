@@ -148,20 +148,26 @@
   <gazebo reference="caster_link">
     <material>Gazebo/DarkGrey</material>
   </gazebo>
+  <ros2_control name="RoverSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <joint name="left_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+    <joint name="right_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+  </ros2_control>
 
-<!-- ===================== Gazebo: differential drive plugin ===================== -->
   <gazebo>
-    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
-      <left_joint>left_wheel_joint</left_joint>
-      <right_joint>right_wheel_joint</right_joint>
-      <wheel_separation>${wheel_separation}</wheel_separation>
-      <wheel_radius>${wheel_radius}</wheel_radius>
-      <max_linear_acceleration>1.0</max_linear_acceleration>
-      <topic>cmd_vel</topic>
-      <odom_topic>odom</odom_topic>
-      <frame_id>odom</frame_id>
-      <child_frame_id>base_footprint</child_frame_id>
-      <odom_publish_frequency>30</odom_publish_frequency>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find rover_description)/config/controllers.yaml</parameters>
     </plugin>
   </gazebo>
+
 </robot>
