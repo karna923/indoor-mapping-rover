@@ -21,6 +21,7 @@ def generate_launch_description():
     )
 
     xacro_file = os.path.join(pkg_rover_description, 'urdf', 'rover.urdf.xacro')
+    world_path = os.path.join(pkg_rover_description, 'worlds', 'room.sdf')
     robot_description = ParameterValue(Command(['xacro ', xacro_file]), value_type=str)
 
     # Publishes robot_description + TF tree, same as your RViz setup
@@ -40,7 +41,7 @@ def generate_launch_description():
                 'gz_sim.launch.py'
             )
         ),
-        launch_arguments={'gz_args': '-r empty.sdf'}.items()
+        launch_arguments={'gz_args': f'-r {world_path}'}.items()
     )
 
     # Spawn the robot into the running Gazebo world using robot_description
@@ -61,6 +62,15 @@ def generate_launch_description():
         #],
        # output='screen'
     #)
+
+    lidar_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan'
+        ],
+        output='screen'
+    )
 
     clock_bridge = Node(
         package='ros_gz_bridge',
@@ -97,6 +107,13 @@ def generate_launch_description():
             ]
         )
     )
+    
+    lidar_frame_bridge = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments=['0', '0', '0', '0', '0', '0', 'lidar_link', 'rover/base_footprint/lidar'],
+        output='screen'
+    )
     return LaunchDescription([
         gz_resource_path,
         robot_state_publisher_node,
@@ -104,5 +121,7 @@ def generate_launch_description():
         spawn_entity,
         load_joint_state_broadcaster,
         load_diff_drive_controller,
-        clock_bridge
+        clock_bridge,
+        lidar_frame_bridge,
+        lidar_bridge
     ])

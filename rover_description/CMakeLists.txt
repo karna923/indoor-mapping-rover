@@ -8,7 +8,13 @@ install(DIRECTORY
   launch
   meshes
   config
+  worlds
   DESTINATION share/${PROJECT_NAME}
+)
+
+install(PROGRAMS
+  scripts/fake_lidar_publisher.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_package()
