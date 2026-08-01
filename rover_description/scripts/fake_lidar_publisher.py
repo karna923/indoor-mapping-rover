@@ -89,6 +89,7 @@ def ray_circle_intersect(ox, oy, dx, dy, cx, cy, r):
 class FakeLidarPublisher(Node):
     def __init__(self):
         super().__init__('fake_lidar_publisher')
+        self.set_parameters([rclpy.parameter.Parameter('use_sim_time', rclpy.Parameter.Type.BOOL, True)])
 
         qos = QoSProfile(
             reliability=ReliabilityPolicy.BEST_EFFORT,

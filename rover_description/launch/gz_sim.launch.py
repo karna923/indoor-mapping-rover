@@ -114,6 +114,21 @@ def generate_launch_description():
         arguments=['0', '0', '0', '0', '0', '0', 'lidar_link', 'rover/base_footprint/lidar'],
         output='screen'
     )
+    
+    imu_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/imu@sensor_msgs/msg/Imu[gz.msgs.IMU'],
+        output='screen'
+    )
+    
+    ground_truth_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/model/rover/odometry_ground_truth@nav_msgs/msg/Odometry[gz.msgs.Odometry'],
+        output='screen'
+    )
+    
     return LaunchDescription([
         gz_resource_path,
         robot_state_publisher_node,
@@ -123,5 +138,7 @@ def generate_launch_description():
         load_diff_drive_controller,
         clock_bridge,
         lidar_frame_bridge,
-        lidar_bridge
+        lidar_bridge,
+        imu_bridge,
+        ground_truth_bridge
     ])

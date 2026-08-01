@@ -157,6 +157,55 @@
     </inertial>
   </link>
 
+
+  <link name="imu_link">
+    <visual>
+    <geometry>
+      <box size="0.02 0.02 0.01"/>
+    </geometry>
+    <material name="green">
+      <color rgba="0 0.6 0 1"/>
+    </material>
+  </visual>
+  <collision>
+    <geometry>
+      <box size="0.02 0.02 0.01"/>
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="0.01"/>
+    <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+  </inertial>
+</link>
+
+<joint name="imu_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="imu_link"/>
+  <origin xyz="0 0 0.04" rpy="0 0 0"/>
+</joint>
+
+<gazebo reference="imu_link">
+  <sensor name="imu_sensor" type="imu">
+    <always_on>true</always_on>
+    <update_rate>100</update_rate>
+    <visualize>false</visualize>
+    <topic>imu</topic>
+    <imu>
+      <angular_velocity>
+        <x><noise type="gaussian"><mean>0.0</mean><stddev>0.0009</stddev></noise></x>
+        <y><noise type="gaussian"><mean>0.0</mean><stddev>0.0009</stddev></noise></y>
+        <z><noise type="gaussian"><mean>0.0</mean><stddev>0.0009</stddev></noise></z>
+      </angular_velocity>
+      <linear_acceleration>
+        <x><noise type="gaussian"><mean>0.0</mean><stddev>0.004</stddev></noise></x>
+        <y><noise type="gaussian"><mean>0.0</mean><stddev>0.004</stddev></noise></y>
+        <z><noise type="gaussian"><mean>0.0</mean><stddev>0.004</stddev></noise></z>
+      </linear_acceleration>
+    </imu>
+  </sensor>
+</gazebo>
+
+
   <joint name="lidar_joint" type="fixed">
     <parent link="base_link"/>
     <child link="lidar_link"/>
@@ -229,4 +278,14 @@
     </plugin>
   </gazebo>
 
+
+  <gazebo>
+    <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+      <odom_frame>ground_truth_odom</odom_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+      <odom_topic>/model/rover/odometry_ground_truth</odom_topic>
+      <odom_publish_frequency>100</odom_publish_frequency>
+      <dimensions>2</dimensions>
+    </plugin>
+  </gazebo>
 </robot>
